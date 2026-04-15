@@ -59,17 +59,17 @@ An interactive web-based tool for **Theory of Automata & Formal Languages (TAFL)
 
 ---
 
-## ⚙️ How to Run Locally
+### 🚀 Launch the Project
 
-Follow these steps to set up and run the project on your local machine:
+To view the interactive project in your browser, follow these steps:
 
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/Sakshi7654/tafl-regex-project.git
+1. **Open in VS Code:** Open the cloned folder in Visual Studio Code.
+2. **Start Live Server:** * Locate the `index.html` file in the file explorer.
+   * Right-click the file and select **"Open with Live Server"**.
+   * Alternatively, click the **"Go Live"** button in the bottom status bar.
+
 ---
--Open with live server
 
 ## 👩‍💻 Author
 
-**Sakshi**  
-Built for learning **Theory of Automata & Formal Languages** in an interactive way 🎓
+> **Sakshi** > Built for learning **Theory of Automata & Formal Languages** in an interactive way 🎓
