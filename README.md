@@ -1,63 +1,75 @@
-⚡ TAFL Regex Explorer
+# ⚡ TAFL Regex Explorer
 
-An interactive web-based tool designed for students studying Theory of Automata & Formal Languages (TAFL).
-It helps visualize, understand, and experiment with regular expressions in a simple and engaging way.
+An interactive web-based tool for **Theory of Automata & Formal Languages (TAFL)** that helps students explore, visualize, and understand **regular expressions**.
 
-🚀 Features
-🔹 Regex String Generator
-Generate all strings accepted by a regex up to a chosen length
-Strings grouped by length
-Supports ε (empty string)
-Animated and clean output display
-🔹 Equivalence Checker
-Check whether two regular expressions define the same language
-Provides counterexample if not equivalent
-Uses intelligent sampling for comparison
-🔹 Symbol Palette
-Click-to-insert regex symbols
-Includes:
-Literals (a, b, 0, 1, etc.)
-Operators (|, ., ())
-Quantifiers (*, +)
-🔹 Live Matcher
-Test any string against your regex in real-time
-Instant match / no match feedback
-🔹 Plain English Explanation
-Converts regex into beginner-friendly explanation
-Helps in understanding patterns quickly
-🔹 Preset Examples
-Pre-built regex patterns for quick testing
-Includes common patterns like:
-(a|b)*
-\d+
-[a-z]+
-⚙️ How to Run Locally
-Clone the repository:
+---
+
+## 🚀 Features
+
+### 🔹 Regex String Generator
+- Generate all strings accepted by a regex up to a chosen length  
+- Strings grouped by length  
+- Supports empty string (ε)  
+- Clean and animated UI  
+
+### 🔹 Equivalence Checker
+- Check if two regular expressions are equivalent  
+- Shows **counterexample** when they are not  
+- Smart sampling-based comparison  
+
+### 🔹 Symbol Palette
+- Click-to-insert regex symbols  
+- Includes literals, operators, and quantifiers  
+
+### 🔹 Live Matcher
+- Test strings against regex in real-time  
+- Instant match / no match feedback  
+
+### 🔹 Plain English Explanation
+- Converts regex into simple explanations  
+- Beginner-friendly learning support  
+
+### 🔹 Preset Examples
+- Ready-to-use regex patterns for quick testing  
+
+---
+
+## 🖥️ Tech Stack
+
+- HTML  
+- CSS (Dark theme + modern UI)  
+- JavaScript (Vanilla JS)
+
+---
+
+## 🧠 How It Works
+
+### 🔸 String Generation
+- Uses **Breadth-First Search (BFS)** to generate possible strings  
+- Limits string length to avoid infinite expansion  
+- Validates each string using JavaScript `RegExp`  
+
+### 🔸 Equivalence Checking
+- Generates a large sample set of strings  
+- Tests both regex on each string  
+- If any mismatch is found:
+  - Returns a **counterexample**
+- Otherwise:
+  - Marks them as **equivalent (within tested range)**  
+
+---
+
+## ⚙️ How to Run Locally
+
+Follow these steps to set up and run the project on your local machine:
+
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/Sakshi7654/tafl-regex-project.git
-Open the folder in VS Code
-Run the project:
-Simply open index.html in your browser
-🧠 How It Works
-🔸 String Generation
-Uses BFS (Breadth-First Search) to generate strings
-Tests strings using JavaScript RegExp
-Limits length to avoid explosion
-🔸 Equivalence Checking
-Generates a large sample set of strings
-Compares acceptance of both regex
-Returns:
-✅ Equivalent
-❌ Not Equivalent + counterexample
-🎯 Use Cases
-Learning Regular Expressions
-Understanding Automata concepts
-Practicing regex problems
-🙌 Contribution
+---
+-Open with live server
 
-Feel free to fork and improve the project!
-Pull requests are welcome 🚀
+## 👩‍💻 Author
 
-💡 Author
-
-Developed by Sakshi
-For learning and exploring TAFL concepts in an interactive way 🎓
+**Sakshi**  
+Built for learning **Theory of Automata & Formal Languages** in an interactive way 🎓
