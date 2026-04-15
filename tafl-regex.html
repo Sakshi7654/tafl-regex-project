@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TAFL — Regex Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #060910;
+    --surface: #0d1117;
+    --card: #111827;
+    --border: #1f2937;
+    --accent: #00f5c4;
+    --accent2: #7c5cfc;
+    --accent3: #ff6b6b;
+    --amber: #fbbf24;
+    --text: #f0f4f8;
+    --muted: #6b7280;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,196,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,196,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: rgba(6,9,16,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .82rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,245,196,.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(124,92,252,.1) 0%, transparent 70%);
+    top: 40%; left: 30%;
+    transform: translate(-50%,-50%);
+    animation: pulse 6s ease-in-out 2s infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity:.7; }
+    50% { transform: translate(-50%,-50%) scale(1.15); opacity:1; }
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid rgba(0,245,196,.3);
+    padding: .35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    display: inline-block;
+    animation: fadeUp .8s ease both;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: .95;
+    letter-spacing: -.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .8s .15s ease both;
+  }
+
+  .hero-title .accent-t { color: var(--accent); }
+  .hero-title .accent-p { color: var(--accent2); }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    font-family: var(--mono);
+    animation: fadeUp .8s .3s ease both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp .8s .45s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.75rem;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { background: #00d4a8; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,245,196,.3); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ── SECTION WRAPPER ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 2rem;
+  }
+
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: .75rem;
+  }
+
+  .section-desc {
+    font-family: var(--mono);
+    font-size: .85rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── CARD ── */
+  .glass-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: .4;
+  }
+
+  /* ── INPUT ── */
+  .input-group { margin-bottom: 1.25rem; }
+
+  .input-label {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+    display: block;
+  }
+
+  .regex-input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+
+  .regex-input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,245,196,.1); }
+
+  .regex-prefix {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    padding: 0 .75rem;
+    border-right: 1px solid var(--border);
+    background: rgba(0,245,196,.06);
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .regex-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0 1rem;
+    height: 48px;
+    font-family: var(--mono);
+    font-size: .95rem;
+    color: var(--text);
+    caret-color: var(--accent);
+  }
+
+  .regex-input::placeholder { color: var(--muted); }
+
+  /* ── PALETTE ── */
+  .palette-title {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+
+  .palette-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+
+  .pal-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+
+  .sym-btn {
+    font-family: var(--mono);
+    font-size: .8rem;
+    padding: .3rem .65rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+
+  .sym-btn:hover {
+    background: rgba(0,245,196,.12);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .sym-btn.purple { color: var(--accent2); }
+  .sym-btn.purple:hover { background: rgba(124,92,252,.12); border-color: var(--accent2); }
+  .sym-btn.red { color: var(--accent3); }
+  .sym-btn.red:hover { background: rgba(255,107,107,.12); border-color: var(--accent3); }
+  .sym-btn.amber { color: var(--amber); }
+  .sym-btn.amber:hover { background: rgba(251,191,36,.12); border-color: var(--amber); }
+
+  /* ── CONTROLS ROW ── */
+  .controls-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .slider-label { font-family: var(--mono); font-size: .75rem; color: var(--muted); white-space: nowrap; }
+  .slider-val {
+    font-family: var(--mono);
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 24px;
+    text-align: right;
+  }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0,245,196,.5);
+  }
+
+  .gen-btn {
+    background: linear-gradient(135deg, var(--accent), #00c9a0);
+    color: #000;
+    font-family: var(--mono);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    padding: .65rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+
+  .gen-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,245,196,.3); }
+
+  .clear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: .78rem;
+    padding: .65rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .clear-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ── TESTER ── */
+  .tester-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tester-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 180px;
+  }
+
+  .tester-prefix {
+    font-family: var(--mono);
+    font-size: .7rem;
+    color: var(--muted);
+    padding: 0 .75rem;
+    border-right: 1px solid var(--border);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    letter-spacing: .05em;
+  }
+
+  .tester-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0 .75rem;
+    height: 40px;
+    font-family: var(--mono);
+    font-size: .88rem;
+    color: var(--text);
+  }
+
+  .match-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .9rem;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 700;
+    animation: fadeIn .25s ease;
+    white-space: nowrap;
+  }
+
+  .match-yes { background: rgba(0,245,196,.12); border: 1px solid rgba(0,245,196,.4); color: var(--accent); }
+  .match-no  { background: rgba(255,107,107,.1); border: 1px solid rgba(255,107,107,.4); color: var(--accent3); }
+  .match-err { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); color: var(--amber); }
+
+  /* ── RESULTS ── */
+  .results-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    min-height: 100px;
+    margin-bottom: 1.25rem;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .results-title {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .results-count {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--accent);
+    background: rgba(0,245,196,.08);
+    border: 1px solid rgba(0,245,196,.2);
+    padding: .15rem .6rem;
+    border-radius: 100px;
+  }
+
+  .len-group { margin-bottom: 1rem; }
+
+  .len-badge {
+    font-family: var(--mono);
+    font-size: .65rem;
+    color: var(--accent2);
+    letter-spacing: .1em;
+    margin-bottom: .4rem;
+    text-transform: uppercase;
+  }
+
+  .strings-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .s-chip {
+    font-family: var(--mono);
+    font-size: .8rem;
+    padding: .25rem .7rem;
+    background: rgba(124,92,252,.1);
+    border: 1px solid rgba(124,92,252,.25);
+    border-radius: 6px;
+    color: #c4b5fd;
+    animation: chipIn .2s ease both;
+    cursor: default;
+    transition: background .15s;
+  }
+
+  .s-chip:hover { background: rgba(124,92,252,.22); }
+  .s-chip.epsilon { color: var(--accent); border-color: rgba(0,245,196,.25); background: rgba(0,245,196,.08); }
+
+  @keyframes chipIn {
+    from { opacity: 0; transform: scale(.8); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .empty-state {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+
+  .error-state {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--accent3);
+    padding: .5rem 0;
+  }
+
+  /* ── EXPLAIN ── */
+  .explain-panel {
+    background: rgba(124,92,252,.06);
+    border: 1px solid rgba(124,92,252,.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: none;
+    animation: fadeIn .3s ease;
+  }
+
+  .explain-label {
+    font-family: var(--mono);
+    font-size: .65rem;
+    letter-spacing: .15em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .explain-text {
+    font-family: var(--mono);
+    font-size: .83rem;
+    color: #c4b5fd;
+    line-height: 1.7;
+  }
+
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  /* ── EQUIV SECTION ── */
+  .equiv-inputs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .equiv-inputs { grid-template-columns: 1fr; }
+    .vs-badge { display: none; }
+  }
+
+  .vs-badge {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+    padding-bottom: .25rem;
+  }
+
+  .equiv-btn {
+    background: linear-gradient(135deg, var(--accent2), #5b4ac7);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    padding: .75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .equiv-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,92,252,.4); }
+
+  /* ── FIX: equiv result always block, hidden via class ── */
+  .equiv-result-wrap {
+    animation: fadeIn .35s ease;
+  }
+
+  .equiv-verdict {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    border-radius: 14px;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .equiv-yes { background: rgba(0,245,196,.08); border: 1px solid rgba(0,245,196,.3); }
+  .equiv-no  { background: rgba(255,107,107,.07); border: 1px solid rgba(255,107,107,.3); }
+
+  .equiv-icon { font-size: 3rem; margin-bottom: .75rem; }
+
+  .equiv-label {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: .4rem;
+  }
+
+  .equiv-yes .equiv-label { color: var(--accent); }
+  .equiv-no .equiv-label  { color: var(--accent3); }
+
+  .equiv-sub {
+    font-family: var(--mono);
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  .counter-box {
+    background: rgba(251,191,36,.07);
+    border: 1px solid rgba(251,191,36,.25);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    animation: fadeIn .3s ease;
+  }
+
+  .counter-label {
+    font-family: var(--mono);
+    font-size: .65rem;
+    letter-spacing: .15em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .counter-detail {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .counter-item {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .counter-key { font-family: var(--mono); font-size: .68rem; color: var(--muted); }
+  .counter-val { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--amber); }
+
+  /* ── PRESETS BAR ── */
+  .presets-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .preset-chip {
+    font-family: var(--mono);
+    font-size: .72rem;
+    padding: .25rem .75rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    background: transparent;
+  }
+
+  .preset-chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,245,196,.06); }
+
+  /* ── FEATURES STRIP ── */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color .2s, transform .2s;
+  }
+
+  .feature-card:hover { border-color: rgba(0,245,196,.3); transform: translateY(-3px); }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: .75rem;
+  }
+
+  .feature-name {
+    font-size: .95rem;
+    font-weight: 700;
+    margin-bottom: .4rem;
+  }
+
+  .feature-desc {
+    font-family: var(--mono);
+    font-size: .75rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo { font-family: var(--mono); font-size: .85rem; color: var(--accent); }
+  .footer-copy { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+
+  /* ── SECTION ACCENT LINE ── */
+  .section-accent {
+    width: 48px; height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-accent.purple { background: linear-gradient(90deg, var(--accent2), transparent); }
+
+  /* ── SCROLL CUE ── */
+  .scroll-cue {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  .scroll-cue span { font-family: var(--mono); font-size: .65rem; letter-spacing: .15em; color: var(--muted); text-transform: uppercase; }
+  .scroll-arrow { width: 16px; height: 16px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); }
+
+  @keyframes bob {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── HIGHLIGHT PANE (two col layout) ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  .highlight-tag {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .2em;
+    padding: .2rem .65rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: .5rem;
+  }
+
+  .tag-gen { background: rgba(0,245,196,.1); border: 1px solid rgba(0,245,196,.3); color: var(--accent); }
+  .tag-eq  { background: rgba(124,92,252,.1); border: 1px solid rgba(124,92,252,.3); color: var(--accent2); }
+
+  /* ── SCROLL ANIMATION ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── EQUIV CHECKING STATE ── */
+  .equiv-btn.checking {
+    opacity: .7;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TAFL//</div>
+  <ul class="nav-links">
+    <li><a href="#generator">Generator</a></li>
+    <li><a href="#equivalence">Equivalence</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
+  <div class="hero-tag">Theory of Automata & Formal Languages</div>
+
+  <h1 class="hero-title">
+    <span class="accent-t">Regex</span><br/>
+    <span class="accent-p">Explorer</span>
+  </h1>
+
+  <p class="hero-sub">
+    Interactive tool for generating strings from<br/>
+    regular expressions and checking equivalence —<br/>
+    built for students, by structure.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#generator" class="btn btn-primary">⚡ Try Generator</a>
+    <a href="#equivalence" class="btn btn-outline">⚖ Check Equivalence</a>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="section" id="about">
+  <div class="section-inner">
+    <div class="features reveal">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-name">String Generation</div>
+        <div class="feature-desc">Generate all strings accepted by a regex up to any length. Grouped, sorted, and animated.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚖</div>
+        <div class="feature-name">Equivalence Checker</div>
+        <div class="feature-desc">Test if two regular expressions define the same language, with a counterexample when they don't.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-name">Symbol Palette</div>
+        <div class="feature-desc">Click-to-insert palette for operators, character classes, anchors, and quantifiers.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-name">Live Matcher</div>
+        <div class="feature-desc">Test any string against your regex in real time with instant visual feedback.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📖</div>
+        <div class="feature-name">Plain English</div>
+        <div class="feature-desc">Every regex gets translated into a beginner-friendly explanation instantly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-name">Preset Examples</div>
+        <div class="feature-desc">Pre-loaded examples to jump-start learning — emails, digits, binary, and more.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ SECTION 1: GENERATOR ══ -->
+<section class="section" id="generator">
+  <div class="section-inner">
+
+    <div class="reveal">
+      <div class="section-accent"></div>
+      <div class="section-label">Module 01</div>
+      <h2 class="section-title">Regex String<br/>Generator</h2>
+      <p class="section-desc">Enter a regular expression. The tool generates all matching strings up to your chosen length, grouped by size.</p>
+    </div>
+
+    <div class="glass-card reveal">
+
+      <!-- PRESETS -->
+      <div class="palette-title">Quick Presets</div>
+      <div class="presets-bar" id="presets-bar"></div>
+
+      <!-- REGEX INPUT -->
+      <div class="input-group">
+        <label class="input-label">Regular Expression</label>
+        <div class="regex-input-wrap">
+          <div class="regex-prefix">/</div>
+          <input class="regex-input" id="gen-input" type="text" placeholder="(a|b)*c" autocomplete="off" spellcheck="false" />
+          <div class="regex-prefix" style="border-left:1px solid var(--border);border-right:none;">/</div>
+        </div>
+      </div>
+
+      <!-- PALETTE -->
+      <div class="palette-title">Symbol Palette — click to insert</div>
+      <div id="palette-wrap"></div>
+
+      <!-- CONTROLS -->
+      <div class="controls-row">
+        <div class="slider-wrap">
+          <span class="slider-label">Max Length</span>
+          <input type="range" id="max-len" min="1" max="8" value="5" step="1" />
+          <span class="slider-val" id="max-len-val">5</span>
+        </div>
+        <button class="gen-btn" onclick="runGenerate()">⚡ Generate Strings</button>
+        <button class="clear-btn" onclick="clearGenerator()">✕ Clear</button>
+      </div>
+
+      <!-- TESTER -->
+      <div class="input-group">
+        <label class="input-label">Live Tester — test any string</label>
+        <div class="tester-row">
+          <div class="tester-input-wrap">
+            <div class="tester-prefix">test:</div>
+            <input class="tester-input" id="test-input" type="text" placeholder="type a string…" autocomplete="off" spellcheck="false" />
+          </div>
+          <div id="match-result"></div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="results-panel">
+        <div class="results-header">
+          <div class="results-title">Generated Strings</div>
+          <div class="results-count" id="results-count" style="display:none"></div>
+        </div>
+        <div id="gen-results">
+          <div class="empty-state">Enter a regex above and click "Generate Strings"</div>
+        </div>
+      </div>
+
+      <!-- EXPLAIN -->
+      <div class="explain-panel" id="explain-panel">
+        <div class="explain-label">Plain English Explanation</div>
+        <div class="explain-text" id="explain-text"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ SECTION 2: EQUIVALENCE ══ -->
+<section class="section" id="equivalence">
+  <div class="section-inner">
+
+    <div class="reveal">
+      <div class="section-accent purple"></div>
+      <div class="section-label">Module 02</div>
+      <h2 class="section-title">Equivalence<br/>Checker</h2>
+      <p class="section-desc">Two regular expressions are equivalent if they accept exactly the same set of strings. Enter both and find out — with a counterexample if they differ.</p>
+    </div>
+
+    <div class="glass-card reveal">
+
+      <!-- EQUIV PRESET PAIRS -->
+      <div class="palette-title">Try These Pairs</div>
+      <div class="presets-bar" id="equiv-presets"></div>
+
+      <!-- TWO INPUTS -->
+      <div class="equiv-inputs">
+        <div>
+          <label class="input-label">
+            <span class="highlight-tag tag-gen">Regex A</span>
+          </label>
+          <div class="regex-input-wrap">
+            <div class="regex-prefix">/</div>
+            <input class="regex-input" id="regex-a" type="text" placeholder="(a|b)+" autocomplete="off" spellcheck="false" />
+            <div class="regex-prefix" style="border-left:1px solid var(--border);border-right:none;">/</div>
+          </div>
+        </div>
+        <div class="vs-badge">vs</div>
+        <div>
+          <label class="input-label">
+            <span class="highlight-tag tag-eq">Regex B</span>
+          </label>
+          <div class="regex-input-wrap">
+            <div class="regex-prefix">/</div>
+            <input class="regex-input" id="regex-b" type="text" placeholder="[ab]+" autocomplete="off" spellcheck="false" />
+            <div class="regex-prefix" style="border-left:1px solid var(--border);border-right:none;">/</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="equiv-btn" id="equiv-btn" onclick="checkEquivalence()">⚖ Check Equivalence</button>
+
+      <!-- Result container — always in DOM, shown/hidden via display -->
+      <div id="equiv-result-wrap" style="display:none;">
+        <div class="equiv-verdict" id="equiv-verdict"></div>
+        <div class="counter-box" id="counter-box" style="display:none;">
+          <div class="counter-label">Counterexample Found</div>
+          <div class="counter-detail" id="counter-detail"></div>
+        </div>
+      </div>
+
+      <!-- Equiv clear -->
+      <button class="clear-btn" style="margin-top:1rem" onclick="clearEquiv()">✕ Clear</button>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">TAFL// Regex Explorer</div>
+  <div class="footer-copy">Theory of Automata & Formal Languages — Interactive Tool</div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════
+   PALETTE DATA
+══════════════════════════════════════ */
+const PALETTE = [
+  {
+    label: 'Literals',
+    cls: '',
+    syms: ['a','b','c','d','0','1','A','B','x','y']
+  },
+  {
+    label: 'Quantifiers',
+    cls: 'amber',
+    syms: ['*','+']
+  },
+  {
+    label: 'Operators',
+    cls: 'red',
+    syms: ['|','(',')','.']
+  },
+  
+  
+];
+
+const PRESETS = [
+  { label:'(a|b)*',       val:'(a|b)*' },
+  { label:'\\d+',         val:'\\d+' },
+  { label:'[a-z]+',       val:'[a-z]+' },
+  { label:'a*b+',         val:'a*b+' },
+  { label:'(0|1)*',       val:'(0|1)*' },
+  
+];
+
+const EQUIV_PAIRS = [
+  { label:'(a|b)* vs [ab]*', a:'(a|b)*',  b:'[ab]*'   },
+  { label:'a+ vs aa*',        a:'a+',      b:'aa*'      },
+  { label:'\\d+ vs [0-9]+',   a:'\\d+',    b:'[0-9]+'  },
+  { label:'a* vs a+',         a:'a*',      b:'a+'       },
+  { label:'ab|ba vs (ab|ba)', a:'ab|ba',   b:'(ab|ba)' },
+];
+
+/* ══════════════════════════════════════
+   BUILD PALETTE
+══════════════════════════════════════ */
+function buildPalette() {
+  const wrap = document.getElementById('palette-wrap');
+  PALETTE.forEach(group => {
+    const row = document.createElement('div');
+    row.style.marginBottom = '8px';
+    const lbl = document.createElement('div');
+    lbl.className = 'palette-title';
+    lbl.textContent = group.label;
+    lbl.style.marginBottom = '4px';
+    row.appendChild(lbl);
+    const btns = document.createElement('div');
+    btns.className = 'pal-group';
+    group.syms.forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'sym-btn ' + group.cls;
+      b.textContent = s;
+      b.onclick = () => insertSym('gen-input', s);
+      btns.appendChild(b);
+    });
+    row.appendChild(btns);
+    wrap.appendChild(row);
+  });
+}
+
+function buildPresets() {
+  const bar = document.getElementById('presets-bar');
+  PRESETS.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'preset-chip';
+    b.textContent = p.label;
+    b.onclick = () => { document.getElementById('gen-input').value = p.val; liveExplain(); };
+    bar.appendChild(b);
+  });
+}
+
+function buildEquivPresets() {
+  const bar = document.getElementById('equiv-presets');
+  EQUIV_PAIRS.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'preset-chip';
+    b.textContent = p.label;
+    b.onclick = () => {
+      document.getElementById('regex-a').value = p.a;
+      document.getElementById('regex-b').value = p.b;
+      // Auto-hide previous result when a new pair is loaded
+      document.getElementById('equiv-result-wrap').style.display = 'none';
+    };
+    bar.appendChild(b);
+  });
+}
+
+function insertSym(id, sym) {
+  const inp = document.getElementById(id);
+  const pos = inp.selectionStart;
+  inp.value = inp.value.slice(0, pos) + sym + inp.value.slice(inp.selectionEnd);
+  inp.focus();
+  inp.setSelectionRange(pos + sym.length, pos + sym.length);
+  liveExplain();
+}
+
+/* ══════════════════════════════════════
+   SLIDER
+══════════════════════════════════════ */
+document.getElementById('max-len').oninput = function() {
+  document.getElementById('max-len-val').textContent = this.value;
+};
+
+/* ══════════════════════════════════════
+   LIVE EVENTS
+══════════════════════════════════════ */
+document.getElementById('gen-input').addEventListener('input', () => { liveExplain(); liveMatch(); });
+document.getElementById('test-input').addEventListener('input', liveMatch);
+
+/* ══════════════════════════════════════
+   SAFE REGEX
+══════════════════════════════════════ */
+function safeReg(pat) {
+  try {
+    return new RegExp('^(?:' + pat + ')$');
+  } catch(e) {
+    return null;
+  }
+}
+
+/* ══════════════════════════════════════
+   LIVE MATCH
+══════════════════════════════════════ */
+function liveMatch() {
+  const pat = document.getElementById('gen-input').value.trim();
+  const str = document.getElementById('test-input').value;
+  const el = document.getElementById('match-result');
+  if (!pat) { el.innerHTML = ''; return; }
+  const r = safeReg(pat);
+  if (!r) { el.innerHTML = '<div class="match-badge match-err">⚠ Invalid regex</div>'; return; }
+  if (str === '') { el.innerHTML = ''; return; }
+  el.innerHTML = r.test(str)
+    ? '<div class="match-badge match-yes">✔ Match</div>'
+    : '<div class="match-badge match-no">✘ No Match</div>';
+}
+
+/* ══════════════════════════════════════
+   GENERATE STRINGS
+══════════════════════════════════════ */
+function runGenerate() {
+  const pat = document.getElementById('gen-input').value.trim();
+  const maxLen = parseInt(document.getElementById('max-len').value);
+  const resultsEl = document.getElementById('gen-results');
+  const countEl = document.getElementById('results-count');
+
+  if (!pat) {
+    resultsEl.innerHTML = '<div class="error-state">Please enter a regular expression.</div>';
+    countEl.style.display = 'none';
+    return;
+  }
+
+  const r = safeReg(pat);
+  if (!r) {
+    resultsEl.innerHTML = '<div class="error-state">Invalid regular expression syntax.</div>';
+    countEl.style.display = 'none';
+    return;
+  }
+
+  const strings = genStrings(pat, maxLen);
+  liveExplain();
+
+  if (!strings.length) {
+    resultsEl.innerHTML = `<div class="empty-state">No matching strings found up to length ${maxLen}.<br/>Try patterns like <code style="color:var(--accent)">(a|b)*</code> or <code style="color:var(--accent)">\\d+</code></div>`;
+    countEl.style.display = 'none';
+    return;
+  }
+
+  const byLen = {};
+  strings.forEach(s => {
+    const k = s.length;
+    if (!byLen[k]) byLen[k] = [];
+    byLen[k].push(s);
+  });
+
+  let html = '';
+  Object.keys(byLen).sort((a,b) => +a - +b).forEach((len, gi) => {
+    html += `<div class="len-group">
+      <div class="len-badge">Length ${len}${+len===0?' — ε (empty)':''}</div>
+      <div class="strings-wrap">`;
+    byLen[len].forEach((s, i) => {
+      const delay = gi * 40 + i * 20;
+      const display = s === '' ? 'ε' : escHtml(s);
+      const cls = s === '' ? 's-chip epsilon' : 's-chip';
+      html += `<span class="${cls}" style="animation-delay:${delay}ms">${display}</span>`;
+    });
+    html += `</div></div>`;
+  });
+
+  resultsEl.innerHTML = html;
+  countEl.textContent = strings.length + ' strings';
+  countEl.style.display = '';
+}
+
+const GEN_ALPHABET = ['a','b','c','d','0','1','x','y','A','B',''];
+
+function genStrings(pat, maxLen) {
+  const r = safeReg(pat);
+  if (!r) return [];
+  const found = new Set();
+  const queue = [''];
+  const visited = new Set(['']);
+
+  while (queue.length && found.size < 120) {
+    const cur = queue.shift();
+    if (r.test(cur)) found.add(cur);
+    if (cur.length < maxLen) {
+      GEN_ALPHABET.forEach(c => {
+        if (c === '' && cur.length > 0) return;
+        const next = cur + c;
+        if (!visited.has(next)) { visited.add(next); queue.push(next); }
+      });
+    }
+  }
+  return [...found].sort((a,b) => a.length - b.length || a.localeCompare(b));
+}
+
+/* ══════════════════════════════════════
+   EXPLAIN
+══════════════════════════════════════ */
+function liveExplain() {
+  const pat = document.getElementById('gen-input').value.trim();
+  const panel = document.getElementById('explain-panel');
+  const el = document.getElementById('explain-text');
+  if (!pat) { panel.style.display = 'none'; return; }
+  const txt = explainRegex(pat);
+  el.textContent = txt;
+  panel.style.display = '';
+}
+
+function explainRegex(pat) {
+  if (!pat) return '';
+  const notes = [];
+  if (pat.startsWith('^')) notes.push('Must start at the beginning of the string.');
+  if (pat.endsWith('$') && !pat.endsWith('\\$')) notes.push('Must end at the end of the string.');
+
+  const rules = [
+    [/\\d\+/, 'One or more digit characters (0–9).'],
+    [/\\d\*/, 'Zero or more digit characters.'],
+    [/\\d\?/, 'An optional single digit.'],
+    [/\\d/,   'Matches a single digit (0–9).'],
+    [/\\w\+/, 'One or more word characters (letters, digits, underscore).'],
+    [/\\w\*/, 'Zero or more word characters.'],
+    [/\\w/,   'Matches a word character (letter, digit, or _).'],
+    [/\\s/,   'Matches a whitespace character.'],
+    [/\[a-z\]\+/, 'One or more lowercase letters.'],
+    [/\[a-z\]/,   'A single lowercase letter.'],
+    [/\[A-Z\]\+/, 'One or more uppercase letters.'],
+    [/\[0-9\]\+/, 'One or more digits.'],
+    [/\[0-9\]/,   'A single digit (0–9).'],
+    [/\[a-zA-Z\]/, 'Any letter, upper or lowercase.'],
+    [/\.\*/, 'Any sequence of characters (including none).'],
+    [/\.\+/, 'Any sequence of one or more characters.'],
+    [/\./,   'Any single character (except newline).'],
+    [/\|/,   'Alternation — matches either the left or the right side.'],
+    [/\*/, 'The preceding element can repeat zero or more times.'],
+    [/\+/, 'The preceding element must appear one or more times.'],
+    [/\?/, 'The preceding element is optional (zero or one occurrence).'],
+    [/\{(\d+),(\d+)\}/, (m) => `Repeat the preceding element between ${m[1]} and ${m[2]} times.`],
+    [/\{(\d+)\}/,       (m) => `Repeat the preceding element exactly ${m[1]} time(s).`],
+  ];
+
+  rules.forEach(([re, msg]) => {
+    const m = pat.match(re);
+    if (m) notes.push(typeof msg === 'function' ? msg(m) : msg);
+  });
+
+  if (!notes.length) return 'This pattern matches specific sequences. Use the palette to explore what each token means.';
+  return notes.join(' ');
+}
+
+/* ══════════════════════════════════════
+   EQUIVALENCE  ← FIXED
+══════════════════════════════════════ */
+function checkEquivalence() {
+  const patA = document.getElementById('regex-a').value.trim();
+  const patB = document.getElementById('regex-b').value.trim();
+
+  const wrap        = document.getElementById('equiv-result-wrap');
+  const verdict     = document.getElementById('equiv-verdict');
+  const counterBox  = document.getElementById('counter-box');
+  const counterDet  = document.getElementById('counter-detail');
+  const btn         = document.getElementById('equiv-btn');
+
+  /* ── guard: both fields must be filled ── */
+  if (!patA || !patB) {
+    verdict.className = 'equiv-verdict equiv-no';
+    verdict.innerHTML = `
+      <div class="equiv-icon">⚠️</div>
+      <div class="equiv-label" style="color:var(--amber)">Input Required</div>
+      <div class="equiv-sub">Please fill in both Regex A and Regex B.</div>`;
+    counterBox.style.display = 'none';
+    wrap.style.display = 'block';
+    return;
+  }
+
+  /* ── validate syntax ── */
+  const rA = safeReg(patA);
+  const rB = safeReg(patB);
+
+  if (!rA || !rB) {
+    verdict.className = 'equiv-verdict equiv-no';
+    verdict.innerHTML = `
+      <div class="equiv-icon">⚠️</div>
+      <div class="equiv-label" style="color:var(--amber)">Syntax Error</div>
+      <div class="equiv-sub">${!rA ? 'Regex A' : 'Regex B'} has an invalid syntax. Please fix it and try again.</div>`;
+    counterBox.style.display = 'none';
+    wrap.style.display = 'block';
+    return;
+  }
+
+  /* ── show checking state ── */
+  btn.textContent = '⏳ Checking…';
+  btn.classList.add('checking');
+
+  /* ── run in next tick so the UI updates first ── */
+  setTimeout(function() {
+    try {
+      const samples = buildSampleSet(patA, patB);
+      let diffStr = null;
+      let diffWho = null;
+
+      for (let i = 0; i < samples.length; i++) {
+        const s = samples[i];
+        const mA = rA.test(s);
+        const mB = rB.test(s);
+        if (mA !== mB) {
+          diffStr = s;
+          diffWho = mA
+            ? 'Regex A accepts it — Regex B rejects it'
+            : 'Regex B accepts it — Regex A rejects it';
+          break;
+        }
+      }
+
+      if (diffStr === null) {
+        /* EQUIVALENT */
+        verdict.className = 'equiv-verdict equiv-yes';
+        verdict.innerHTML = `
+          <div class="equiv-icon">✅</div>
+          <div class="equiv-label">Equivalent</div>
+          <div class="equiv-sub">Both patterns accepted the same strings across ${samples.length} test cases (length ≤ 6).</div>`;
+        counterBox.style.display = 'none';
+      } else {
+        /* NOT EQUIVALENT */
+        verdict.className = 'equiv-verdict equiv-no';
+        verdict.innerHTML = `
+          <div class="equiv-icon">❌</div>
+          <div class="equiv-label">Not Equivalent</div>
+          <div class="equiv-sub">A difference was found among ${samples.length} tested strings.</div>`;
+
+        counterDet.innerHTML = `
+          <div class="counter-item">
+            <div class="counter-key">Counterexample string</div>
+            <div class="counter-val">${diffStr === '' ? 'ε (empty string)' : escHtml(diffStr)}</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-key">Difference</div>
+            <div class="counter-val" style="font-size:.82rem;color:var(--amber)">${escHtml(diffWho)}</div>
+          </div>`;
+        counterBox.style.display = 'block';
+      }
+
+      wrap.style.display = 'block';
+
+    } catch(err) {
+      verdict.className = 'equiv-verdict equiv-no';
+      verdict.innerHTML = `
+        <div class="equiv-icon">⚠️</div>
+        <div class="equiv-label" style="color:var(--amber)">Error</div>
+        <div class="equiv-sub">An unexpected error occurred: ${escHtml(err.message)}</div>`;
+      counterBox.style.display = 'none';
+      wrap.style.display = 'block';
+    }
+
+    /* ── restore button ── */
+    btn.textContent = '⚖ Check Equivalence';
+    btn.classList.remove('checking');
+
+  }, 30);
+}
+
+/* ──────────────────────────────────────
+   buildSampleSet  ← FIXED
+   Builds a large, deterministic set of
+   test strings using BFS over the combined
+   alphabet of both patterns.
+────────────────────────────────────── */
+function buildSampleSet(patA, patB) {
+  /* Derive alphabet from both patterns */
+  const literalRe = /[a-zA-Z0-9]/g;
+  const combined  = (patA + patB);
+  const alphaSet  = new Set();
+
+  let m;
+  while ((m = literalRe.exec(combined)) !== null) {
+    /* skip letters that are part of escape sequences like \d \w \s */
+    const before = combined[m.index - 1];
+    if (before !== '\\') alphaSet.add(m[0]);
+  }
+
+  /* Always include at least a and b */
+  alphaSet.add('a');
+  alphaSet.add('b');
+
+  /* Add standard extra samples that cover common patterns */
+  if (/\\d|[0-9]/.test(combined)) { alphaSet.add('0'); alphaSet.add('1'); alphaSet.add('9'); }
+  if (/\\w/.test(combined))        { alphaSet.add('_'); }
+
+  const alpha = [...alphaSet];
+
+  /* BFS up to length 6 */
+  const result  = [];
+  const visited = new Set();
+  const queue   = [''];
+
+  while (queue.length > 0 && result.length < 2000) {
+    const cur = queue.shift();
+    if (visited.has(cur)) continue;
+    visited.add(cur);
+    result.push(cur);
+
+    if (cur.length < 6) {
+      for (let i = 0; i < alpha.length; i++) {
+        const next = cur + alpha[i];
+        if (!visited.has(next)) queue.push(next);
+      }
+    }
+  }
+
+  return result;
+}
+
+/* ══════════════════════════════════════
+   CLEAR
+══════════════════════════════════════ */
+function clearGenerator() {
+  document.getElementById('gen-input').value = '';
+  document.getElementById('test-input').value = '';
+  document.getElementById('match-result').innerHTML = '';
+  document.getElementById('gen-results').innerHTML = '<div class="empty-state">Enter a regex above and click "Generate Strings"</div>';
+  document.getElementById('results-count').style.display = 'none';
+  document.getElementById('explain-panel').style.display = 'none';
+}
+
+function clearEquiv() {
+  document.getElementById('regex-a').value = '';
+  document.getElementById('regex-b').value = '';
+  document.getElementById('equiv-result-wrap').style.display = 'none';
+  document.getElementById('counter-box').style.display = 'none';
+  document.getElementById('equiv-btn').textContent = '⚖ Check Equivalence';
+  document.getElementById('equiv-btn').classList.remove('checking');
+}
+
+/* ══════════════════════════════════════
+   UTILS
+══════════════════════════════════════ */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+buildPalette();
+buildPresets();
+buildEquivPresets();
+</script>
+</body>
+</html>
