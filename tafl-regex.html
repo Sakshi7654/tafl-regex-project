@@ -1116,11 +1116,11 @@ const PALETTE = [
 ];
 
 const PRESETS = [
-  { label:'(a|b)*',       val:'(a|b)*' },
-  { label:'\\d+',         val:'\\d+' },
-  { label:'[a-z]+',       val:'[a-z]+' },
-  { label:'a*b+',         val:'a*b+' },
-  { label:'(0|1)*',       val:'(0|1)*' },
+  { label:'(a+b)*',       val:'(a+b)*' },
+  { label:'a(a+b)*',         val:'a(a+b)*' },
+  { label:'(1+b)',       val:'(1+b)' },
+  { label:'1*00',         val:'1*00' },
+  { label:'(0+1)*',       val:'(0+1)*' },
   
 ];
 
